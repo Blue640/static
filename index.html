@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STATIC // COMMUNICATIONS TERMINAL</title>
+    <title>STATIC MESSENGER</title>
     <style>
         :root {
             --bg-color: #1a1b1e;
             --panel-color: #25262b;
-            --accent-color: #e67e22; /* Тыквенно-оранжевый (милитари) */
+            --accent-color: #e67e22; 
             --text-main: #c1c2c5;
             --text-dim: #5c5f66;
             --border-style: 1px solid #373a40;
+            --danger: #e03131;
         }
 
         body, html {
             margin: 0; padding: 0; height: 100%;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             overflow: hidden;
@@ -26,106 +27,98 @@
 
         /* --- БОКОВАЯ ПАНЕЛЬ --- */
         .sidebar {
-            width: 320px;
-            background-color: var(--panel-color);
-            border-right: var(--border-style);
-            display: flex;
-            flex-direction: column;
+            width: 320px; background-color: var(--panel-color);
+            border-right: var(--border-style); display: flex; flex-direction: column;
             transition: 0.3s;
         }
 
         .sidebar-header {
-            padding: 25px 20px;
-            background: #2c2e33;
-            border-bottom: var(--border-style);
+            padding: 20px; background: #2c2e33; border-bottom: var(--border-style);
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .sidebar-header h1 {
-            margin: 0; font-size: 1.1rem; letter-spacing: 3px;
-            color: var(--accent-color); font-weight: 800;
-        }
-
-        .sidebar-header p { margin: 5px 0 0; font-size: 0.7rem; color: var(--text-dim); }
+        .sidebar-header h1 { margin: 0; font-size: 1.2rem; color: var(--accent-color); }
+        .admin-btn { background: var(--danger); color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;}
 
         .chats-list { flex: 1; overflow-y: auto; }
 
         .chat-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #2c2e33;
-            cursor: pointer;
-            display: flex;
-            gap: 12px;
-            transition: 0.2s;
+            padding: 15px; border-bottom: 1px solid #2c2e33; cursor: pointer;
+            display: flex; gap: 12px; align-items: center;
         }
-
-        .chat-item:hover { background: #2c2e33; }
-        .chat-item.active { 
-            background: #2c2e33; 
-            border-left: 4px solid var(--accent-color);
-        }
+        .chat-item:hover, .chat-item.active { background: #2c2e33; }
+        .chat-item.active { border-left: 4px solid var(--accent-color); }
 
         .chat-avatar {
-            width: 42px; height: 42px;
-            background: #373a40; border-radius: 4px;
+            width: 40px; height: 40px; background: #373a40; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: var(--accent-color);
-            border: 1px solid #4d4f55;
+            font-weight: bold; color: var(--text-main); cursor: pointer;
         }
 
-        .chat-meta h2 { margin: 0; font-size: 0.9rem; color: #fff; }
-        .chat-meta p { margin: 3px 0 0; font-size: 0.75rem; color: var(--text-dim); }
+        .chat-meta h2 { margin: 0; font-size: 0.95rem; color: #fff; }
+        .chat-meta p { margin: 3px 0 0; font-size: 0.8rem; color: var(--text-dim); }
 
         /* --- ОКНО ЧАТА --- */
-        .chat-window { flex: 1; display: flex; flex-direction: column; background: #141517; }
+        .chat-window { flex: 1; display: flex; flex-direction: column; background: #141517; position: relative; }
 
         .chat-header {
-            padding: 15px 20px;
-            background: var(--panel-color);
-            border-bottom: var(--border-style);
-            display: flex; align-items: center; justify-content: space-between;
+            padding: 15px 20px; background: var(--panel-color); border-bottom: var(--border-style);
+            display: flex; align-items: center; gap: 15px;
         }
 
         .back-btn { display: none; background: none; border: none; color: var(--accent-color); font-size: 1.2rem; cursor: pointer; }
-
-        .chat-info h2 { margin: 0; font-size: 1rem; }
-        .chat-info span { font-size: 0.7rem; color: #40c057; } /* Зеленый онлайн */
+        
+        .chat-info h2 { margin: 0; font-size: 1.1rem; cursor: pointer; }
+        .chat-info h2:hover { color: var(--accent-color); }
+        .chat-info span { font-size: 0.8rem; color: var(--text-dim); }
 
         .messages-area {
-            flex: 1; padding: 20px;
-            overflow-y: auto;
-            display: flex; flex-direction: column;
-            gap: 10px;
-            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); /* Легкая текстура */
+            flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
         }
 
-        .msg {
-            max-width: 70%; padding: 10px 14px;
-            font-size: 0.9rem; position: relative;
-            border-radius: 2px;
-        }
-
-        .msg.in { align-self: flex-start; background: #25262b; border-left: 2px solid var(--text-dim); }
-        .msg.out { align-self: flex-end; background: #2c2e33; border-right: 2px solid var(--accent-color); text-align: right; }
-
-        .msg .time { display: block; font-size: 0.65rem; color: var(--text-dim); margin-top: 5px; }
+        .msg { max-width: 70%; padding: 10px 14px; font-size: 0.95rem; border-radius: 6px; }
+        .msg.in { align-self: flex-start; background: #25262b; }
+        .msg.out { align-self: flex-end; background: var(--accent-color); color: #000; }
+        .msg img { max-width: 100%; border-radius: 4px; margin-top: 5px; }
+        .msg .time { display: block; font-size: 0.7rem; opacity: 0.7; margin-top: 5px; text-align: right; }
 
         /* --- ВВОД --- */
         .input-bar {
-            padding: 20px; background: var(--panel-color);
-            display: flex; gap: 10px; border-top: var(--border-style);
+            padding: 15px; background: var(--panel-color); display: flex; gap: 10px; border-top: var(--border-style); align-items: center;
         }
 
-        .input-bar input {
-            flex: 1; background: #1a1b1e; border: var(--border-style);
-            padding: 12px; color: #fff; outline: none; border-radius: 4px;
+        .attach-btn {
+            background: #373a40; border: none; color: #fff; width: 40px; height: 40px;
+            border-radius: 4px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
         }
 
-        .input-bar button {
-            background: var(--accent-color); border: none; padding: 0 20px;
+        .input-bar input[type="text"] {
+            flex: 1; background: #1a1b1e; border: var(--border-style); padding: 12px; color: #fff; border-radius: 4px; outline: none;
+        }
+
+        .input-bar button.send-btn {
+            background: var(--accent-color); border: none; padding: 0 20px; height: 40px;
             color: #000; font-weight: bold; border-radius: 4px; cursor: pointer;
         }
 
-        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
+        /* --- МОДАЛЬНЫЕ ОКНА (Профиль и Админка) --- */
+        .modal-overlay {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center;
+        }
+        .modal { background: var(--panel-color); border: var(--border-style); width: 90%; max-width: 500px; border-radius: 8px; padding: 20px; }
+        .modal-header { display: flex; justify-content: space-between; border-bottom: var(--border-style); padding-bottom: 10px; margin-bottom: 15px; }
+        .modal-header h2 { margin: 0; }
+        .close-btn { background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; }
+        
+        /* Админка элементы */
+        .admin-log-item { background: #1a1b1e; padding: 10px; margin-bottom: 10px; border-radius: 4px; font-family: monospace; font-size: 0.85rem;}
+        .admin-log-item button { background: var(--accent-color); border: none; padding: 5px; cursor: pointer; border-radius: 3px; font-weight:bold; margin-top: 5px; }
+        .admin-users { margin-top: 20px; border-top: var(--border-style); padding-top: 15px;}
+        .user-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #373a40; align-items: center;}
+        .ban-btn { background: var(--danger); color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .unban-btn { background: #40c057; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+
         @media (max-width: 768px) {
             .sidebar { position: absolute; width: 100%; height: 100%; z-index: 10; }
             .sidebar.hidden { transform: translateX(-100%); }
@@ -137,146 +130,264 @@
 <body>
 
 <div class="app-container">
-    
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1>STATIC // V.02</h1>
-            <p>ENCRYPTED TERMINAL SYSTEM</p>
+            <h1>STATIC</h1>
+            <button class="admin-btn" onclick="openAdmin()">ADMIN</button>
         </div>
-        <div class="chats-list" id="chats-list">
-            </div>
+        <div class="chats-list" id="chats-list"></div>
     </aside>
 
     <main class="chat-window">
         <header class="chat-header">
-            <button class="back-btn" onclick="toggleSidebar()">[BACK]</button>
+            <button class="back-btn" onclick="toggleSidebar()">&#8592;</button>
             <div class="chat-info">
-                <h2 id="current-chat-name">System</h2>
-                <span id="current-chat-status">Connect established</span>
+                <h2 id="current-chat-name" onclick="openProfile()">User</h2>
+                <span id="current-chat-status">Offline</span>
             </div>
-            <div style="color: var(--text-dim); font-size: 0.7rem;">SECURE_MODE: ON</div>
         </header>
 
-        <div class="messages-area" id="messages">
-            </div>
+        <div class="messages-area" id="messages"></div>
 
         <div class="input-bar">
-            <input type="text" id="main-input" placeholder="Введите данные...">
-            <button onclick="send()">SEND</button>
+            <input type="file" id="media-input" style="display: none;" accept="image/*" onchange="handleMediaUpload(event)">
+            <button class="attach-btn" onclick="document.getElementById('media-input').click()">+</button>
+            
+            <input type="text" id="main-input" placeholder="Сообщение...">
+            <button class="send-btn" onclick="send()">SEND</button>
         </div>
     </main>
+</div>
 
+<div class="modal-overlay" id="profile-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Профиль пользователя</h2>
+            <button class="close-btn" onclick="closeModals()">&times;</button>
+        </div>
+        <div id="profile-content">
+            <h3 id="prof-name">Имя</h3>
+            <p>Статус: <span id="prof-status"></span></p>
+            <p>ID: <span id="prof-id"></span></p>
+            <p>Права: <span id="prof-role"></span></p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="admin-modal">
+    <div class="modal" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+        <div class="modal-header">
+            <h2 style="color: var(--danger);">ADMIN CONTROL PANEL</h2>
+            <button class="close-btn" onclick="closeModals()">&times;</button>
+        </div>
+        
+        <h3>Управление пользователями</h3>
+        <div class="admin-users" id="admin-users-list"></div>
+
+        <h3 style="margin-top: 20px;">Перехват сообщений (Логи)</h3>
+        <div id="admin-logs-list"></div>
+    </div>
 </div>
 
 <script>
-    // База данных чатов
+    // --- БАЗА ДАННЫХ И ШИФРОВАНИЕ ---
+    // Простая система шифрования в Base64 для вида
+    const encrypt = (text) => btoa(unescape(encodeURIComponent(text)));
+    const decrypt = (text) => decodeURIComponent(escape(atob(text)));
+
+    // База пользователей (Профили)
+    const users = {
+        1: { id: 1, name: "Ярослав", status: "В сети", role: "User", isBanned: false },
+        2: { id: 2, name: "Blue", status: "В сети", role: "Admin", isBanned: false },
+        3: { id: 3, name: "TestBot", status: "Не в сети", role: "Bot", isBanned: true }
+    };
+
+    // База чатов (Сообщения хранятся зашифрованными)
     const chatData = {
         1: {
-            name: "Ярослав (R64)",
-            status: "Online / Terminal_A1",
+            userId: 1, // С кем чат
             messages: [
-                { type: 'in', text: "Статик на связи. Как видишь меня?", time: "20:01" },
-                { type: 'out', text: "Вижу отлично. Перешел на индустриальный протокол.", time: "20:02" }
-            ]
-        },
-        2: {
-            name: "Blue Archive [CORE]",
-            status: "Bot / Local",
-            messages: [
-                { type: 'in', text: "Внимание: Обнаружена новая сборка Static v.02.", time: "12:00" },
-                { type: 'in', text: "Логи системы обновлены.", time: "12:01" }
+                { type: 'in', text: encrypt("Привет, работает?"), isMedia: false, time: "12:00" },
+                { type: 'out', text: encrypt("Да, всё отлично."), isMedia: false, time: "12:01" }
             ]
         },
         3: {
-            name: "Unknown Node",
-            status: "Offline",
+            userId: 3,
             messages: [
-                { type: 'in', text: "Сигнал потерян...", time: "04:20" }
+                { type: 'in', text: encrypt("Я тестовый бот."), isMedia: false, time: "10:00" }
             ]
         }
     };
 
     let currentChatId = 1;
+    const myId = 2; // Твой ID
 
-    // Отрисовка списка чатов
+    // --- ОТРИСОВКА ИНТЕРФЕЙСА ---
     function renderChats() {
         const list = document.getElementById('chats-list');
         list.innerHTML = '';
-        for (let id in chatData) {
-            const chat = chatData[id];
+        for (let chatId in chatData) {
+            const chat = chatData[chatId];
+            const user = users[chat.userId];
+            const lastMsgEnc = chat.messages[chat.messages.length - 1];
+            const lastMsgDec = lastMsgEnc.isMedia ? "[Медиафайл]" : decrypt(lastMsgEnc.text);
+            
             const div = document.createElement('div');
-            div.className = `chat-item ${id == currentChatId ? 'active' : ''}`;
-            div.onclick = () => selectChat(id);
+            div.className = `chat-item ${chatId == currentChatId ? 'active' : ''}`;
+            div.onclick = () => selectChat(chatId);
             div.innerHTML = `
-                <div class="chat-avatar">${chat.name[0]}</div>
+                <div class="chat-avatar">${user.name[0]}</div>
                 <div class="chat-meta">
-                    <h2>${chat.name}</h2>
-                    <p>${chat.messages[chat.messages.length - 1].text}</p>
+                    <h2>${user.name} ${user.isBanned ? '<span style="color:red">(BANNED)</span>' : ''}</h2>
+                    <p>${lastMsgDec}</p>
                 </div>
             `;
             list.appendChild(div);
         }
     }
 
-    // Выбор чата
-    function selectChat(id) {
-        currentChatId = id;
-        const chat = chatData[id];
-        document.getElementById('current-chat-name').innerText = chat.name;
-        document.getElementById('current-chat-status').innerText = chat.status;
+    function selectChat(chatId) {
+        currentChatId = chatId;
+        const user = users[chatData[chatId].userId];
+        
+        document.getElementById('current-chat-name').innerText = user.name;
+        document.getElementById('current-chat-status').innerText = user.isBanned ? "Заблокирован" : user.status;
         
         renderMessages();
         renderChats();
-        
         if (window.innerWidth <= 768) toggleSidebar();
     }
 
-    // Отрисовка сообщений
     function renderMessages() {
         const container = document.getElementById('messages');
         container.innerHTML = '';
-        chatData[currentChatId].messages.forEach(msg => {
+        const messages = chatData[currentChatId].messages;
+
+        messages.forEach(msg => {
             const div = document.createElement('div');
             div.className = `msg ${msg.type}`;
-            div.innerHTML = `${msg.text} <span class="time">${msg.time}</span>`;
+            
+            let content = '';
+            if (msg.isMedia) {
+                // Картинки не шифруем, просто выводим
+                content = `<img src="${msg.text}" alt="Медиа">`;
+            } else {
+                content = decrypt(msg.text); // Расшифровка для показа в чате
+            }
+
+            div.innerHTML = `${content} <span class="time">${msg.time}</span>`;
             container.appendChild(div);
         });
         container.scrollTop = container.scrollHeight;
     }
 
-    // Отправка
+    // --- ОТПРАВКА СООБЩЕНИЙ ---
     function send() {
+        if (users[myId].isBanned) return alert("Вы заблокированы!");
+        const partner = users[chatData[currentChatId].userId];
+        if (partner.isBanned) return alert("Пользователь заблокирован, отправка невозможна.");
+
         const input = document.getElementById('main-input');
         if (!input.value.trim()) return;
 
+        saveMessage('out', input.value, false);
+        input.value = '';
+    }
+
+    function handleMediaUpload(event) {
+        if (users[myId].isBanned) return;
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                saveMessage('out', e.target.result, true); // Сохраняем DataURL картинки
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function saveMessage(type, content, isMedia) {
         const now = new Date();
         const timeStr = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+        
+        // Перед сохранением шифруем текст. Картинки оставляем как есть.
+        const finalContent = isMedia ? content : encrypt(content);
 
-        chatData[currentChatId].messages.push({
-            type: 'out',
-            text: input.value,
-            time: timeStr
-        });
-
-        input.value = '';
+        chatData[currentChatId].messages.push({ type: type, text: finalContent, isMedia: isMedia, time: timeStr });
         renderMessages();
-        renderChats(); // Чтобы обновить последнее сообщение в списке
-    }
-
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('hidden');
-    }
-
-    // Инициализация
-    window.onload = () => {
         renderChats();
-        renderMessages();
-    };
+    }
 
-    // Отправка по Enter
-    document.getElementById('main-input').addEventListener("keypress", e => {
-        if (e.key === "Enter") send();
-    });
+    // --- ПРОФИЛИ ---
+    function openProfile() {
+        const user = users[chatData[currentChatId].userId];
+        document.getElementById('prof-name').innerText = user.name;
+        document.getElementById('prof-status').innerText = user.isBanned ? "ЗАБЛОКИРОВАН" : user.status;
+        document.getElementById('prof-id').innerText = user.id;
+        document.getElementById('prof-role').innerText = user.role;
+        document.getElementById('profile-modal').style.display = 'flex';
+    }
+
+    // --- АДМИН ПАНЕЛЬ ---
+    function openAdmin() {
+        renderAdminUsers();
+        renderAdminLogs();
+        document.getElementById('admin-modal').style.display = 'flex';
+    }
+
+    function renderAdminUsers() {
+        const list = document.getElementById('admin-users-list');
+        list.innerHTML = '';
+        for (let id in users) {
+            const u = users[id];
+            const btn = u.isBanned 
+                ? `<button class="unban-btn" onclick="toggleBan(${id})">Разбан</button>`
+                : `<button class="ban-btn" onclick="toggleBan(${id})">Бан</button>`;
+            
+            list.innerHTML += `
+                <div class="user-row">
+                    <span>[ID: ${u.id}] ${u.name} (${u.role})</span>
+                    ${u.role !== 'Admin' ? btn : '<span>(Admin)</span>'}
+                </div>
+            `;
+        }
+    }
+
+    function toggleBan(userId) {
+        users[userId].isBanned = !users[userId].isBanned;
+        renderAdminUsers();
+        renderChats();
+        selectChat(currentChatId); // Обновить статус в хедере
+    }
+
+    function renderAdminLogs() {
+        const list = document.getElementById('admin-logs-list');
+        list.innerHTML = '';
+        for (let chatId in chatData) {
+            chatData[chatId].messages.forEach((msg, index) => {
+                if (msg.isMedia) return; // Логируем только текст
+                const div = document.createElement('div');
+                div.className = 'admin-log-item';
+                div.innerHTML = `
+                    <div style="color:var(--text-dim)">Чат ID: ${chatId} | Тип: ${msg.type} | Время: ${msg.time}</div>
+                    <div style="color:#e67e22; word-wrap: break-word;">${msg.text}</div>
+                    <button onclick="alert('Расшифровано: ' + decrypt('${msg.text}'))">РАСШИФРОВАТЬ</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+    }
+
+    // --- УТИЛИТЫ ---
+    function closeModals() {
+        document.getElementById('profile-modal').style.display = 'none';
+        document.getElementById('admin-modal').style.display = 'none';
+    }
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('hidden'); }
+
+    document.getElementById('main-input').addEventListener("keypress", e => { if (e.key === "Enter") send(); });
+    window.onload = () => { renderChats(); renderMessages(); };
 </script>
 
 </body>
