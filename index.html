@@ -3,8 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Static - Terminal connection</title>
-    <link rel="stylesheet" href="style.css">
+    <title>STATIC_ TERMINAL</title>
+    <style>
+        /* --- CSS СТИЛИ --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #050a10;
+            color: #a0c0e0;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Сайдбар */
+        .sidebar {
+            width: 300px;
+            background-color: #0a1420;
+            border-right: 1px solid #1a3050;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #1a3050;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: #33ccff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px rgba(51, 204, 255, 0.5);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #33ff99;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #33ff99;
+        }
+
+        .chats-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #1a2535;
+            cursor: pointer;
+        }
+
+        .chat-item:hover { background: #122030; }
+        .chat-item.active { background: #1a3050; border-left: 3px solid #33ccff; }
+
+        .avatar {
+            width: 45px; height: 45px;
+            background: #1a3050;
+            border: 1px solid #33ccff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            color: #33ccff;
+        }
+
+        .chat-info h2 { margin: 0; font-size: 0.95rem; color: #fff; }
+        .chat-info p { margin: 0; font-size: 0.8rem; color: #6080a0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 180px; }
+
+        /* Окно чата */
+        .chat-window {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: #0a1420;
+            border-bottom: 1px solid #1a3050;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn {
+            display: none;
+            background: none; border: none;
+            color: #33ccff; font-size: 1.5rem;
+            margin-right: 10px; cursor: pointer;
+        }
+
+        .chat-title h2 { margin: 0; font-size: 1.1rem; color: #fff; }
+        .chat-title p { margin: 0; font-size: 0.75rem; color: #33ff99; }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(#1a3050 0.5px, transparent 0.5px); /* Сетка как в терминале */
+            background-size: 20px 20px;
+        }
+
+        .message {
+            max-width: 75%;
+            margin-bottom: 15px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message.incoming {
+            align-self: flex-start;
+            background: #1a2535;
+            border: 1px solid #1a3050;
+        }
+
+        .message.outgoing {
+            align-self: flex-end;
+            background: #103050;
+            border: 1px solid #33ccff;
+            color: #fff;
+        }
+
+        .time {
+            display: block;
+            font-size: 0.7rem;
+            margin-top: 5px;
+            opacity: 0.6;
+            text-align: right;
+        }
+
+        .chat-input {
+            padding: 15px;
+            background: #0a1420;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #1a3050;
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: #050a10;
+            border: 1px solid #1a3050;
+            padding: 10px 15px;
+            color: #fff;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input input:focus { border-color: #33ccff; }
+
+        .send-btn {
+            background: #33ccff;
+            border: none;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            color: #050a10;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Адаптив под мобайл */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                z-index: 2;
+            }
+            .sidebar.hidden {
+                transform: translateX(-100%);
+            }
+            .back-btn {
+                display: block;
+            }
+            .message { max-width: 85%; }
+        }
+    </style>
 </head>
 <body>
 
@@ -13,66 +209,91 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h1>STATIC_</h1>
-                <span class="status-icon online"></span>
+                <div class="status-dot"></div>
             </div>
             <div class="chats-list">
-                <div class="chat-item active">
-                    <div class="avatar">Я</div>
+                <div class="chat-item active" onclick="openChat()">
+                    <div class="avatar">ЯР</div>
                     <div class="chat-info">
                         <h2>Ярослав (R64)</h2>
-                        <p>Чекни рацию, сигнал идёт.</p>
+                        <p>Приём, как слышно? Статик...</p>
                     </div>
                 </div>
                 <div class="chat-item">
-                    <div class="avatar">B</div>
+                    <div class="avatar">BA</div>
                     <div class="chat-info">
-                        <h2>Blue Archive [SYS]</h2>
-                        <p>Доступно обновление ядра...</p>
+                        <h2>Blue Archive</h2>
+                        <p>Система обновлена до v1.0</p>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <main class="chat-window" id="chat-window">
+        <main class="chat-window">
             <header class="chat-header">
-                <button class="back-btn" id="back-btn">&#8592;</button> <div class="chat-title">
-                    <h2>Ярослав (R64)</h2>
-                    <p class="status">В сети (Terminal A1)</p>
+                <button class="back-btn" onclick="closeChat()">&#8592;</button>
+                <div class="chat-title">
+                    <h2 id="chat-name">Ярослав (R64)</h2>
+                    <p>Terminal Active</p>
                 </div>
-                <button class="menu-btn">&#8942;</button>
             </header>
-            
-            <div class="messages-container" id="messages">
+
+            <div class="messages-container" id="msg-container">
                 <div class="message incoming">
-                    <div class="msg-content">
-                        <p>Привет. Как связь? Статик ловит?</p>
-                        <span class="time">14:01</span>
-                    </div>
+                    Привет! Тестирую новый мессенджер STATIC.
+                    <span class="time">19:45</span>
                 </div>
                 <div class="message outgoing">
-                    <div class="msg-content">
-                        <p>Всё чётко. Протокол 64 активен.</p>
-                        <span class="time">14:02</span>
-                    </div>
-                </div>
-                <div class="message incoming">
-                    <div class="msg-content">
-                        <p>Ок. Тестим дальше. Отправь шифр.</p>
-                        <span class="time">14:02</span>
-                    </div>
+                    Работает чётко. Адаптив под мобайл на месте.
+                    <span class="time">19:46</span>
                 </div>
             </div>
 
             <footer class="chat-input">
-                <button class="attach-btn">&#43;</button>
-                <input type="text" id="user-input" placeholder="Введите шифр сообщения...">
-                <button class="send-btn" id="send-btn">&#10148;</button>
+                <input type="text" placeholder="Введите сообщение..." id="input-field">
+                <button class="send-btn" onclick="sendMessage()">></button>
             </footer>
         </main>
 
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        /* --- JS ЛОГИКА --- */
+        const sidebar = document.getElementById('sidebar');
+        const inputField = document.getElementById('input-field');
+        const container = document.getElementById('msg-container');
+
+        // Для мобайла: скрыть список и показать чат
+        function openChat() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('hidden');
+            }
+        }
+
+        // Для мобайла: вернуться к списку чатов
+        function closeChat() {
+            sidebar.classList.remove('hidden');
+        }
+
+        // Функция отправки (визуальная часть)
+        function sendMessage() {
+            const text = inputField.value;
+            if (text.trim() !== "") {
+                const msg = document.createElement('div');
+                msg.className = 'message outgoing';
+                msg.innerHTML = `${text}<span class="time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
+                container.appendChild(msg);
+                inputField.value = "";
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // Отправка по Enter
+        inputField.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 </html>
-
