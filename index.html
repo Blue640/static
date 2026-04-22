@@ -1,1 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Static - Terminal connection</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>STATIC_</h1>
+                <span class="status-icon online"></span>
+            </div>
+            <div class="chats-list">
+                <div class="chat-item active">
+                    <div class="avatar">Я</div>
+                    <div class="chat-info">
+                        <h2>Ярослав (R64)</h2>
+                        <p>Чекни рацию, сигнал идёт.</p>
+                    </div>
+                </div>
+                <div class="chat-item">
+                    <div class="avatar">B</div>
+                    <div class="chat-info">
+                        <h2>Blue Archive [SYS]</h2>
+                        <p>Доступно обновление ядра...</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="chat-window" id="chat-window">
+            <header class="chat-header">
+                <button class="back-btn" id="back-btn">&#8592;</button> <div class="chat-title">
+                    <h2>Ярослав (R64)</h2>
+                    <p class="status">В сети (Terminal A1)</p>
+                </div>
+                <button class="menu-btn">&#8942;</button>
+            </header>
+            
+            <div class="messages-container" id="messages">
+                <div class="message incoming">
+                    <div class="msg-content">
+                        <p>Привет. Как связь? Статик ловит?</p>
+                        <span class="time">14:01</span>
+                    </div>
+                </div>
+                <div class="message outgoing">
+                    <div class="msg-content">
+                        <p>Всё чётко. Протокол 64 активен.</p>
+                        <span class="time">14:02</span>
+                    </div>
+                </div>
+                <div class="message incoming">
+                    <div class="msg-content">
+                        <p>Ок. Тестим дальше. Отправь шифр.</p>
+                        <span class="time">14:02</span>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="chat-input">
+                <button class="attach-btn">&#43;</button>
+                <input type="text" id="user-input" placeholder="Введите шифр сообщения...">
+                <button class="send-btn" id="send-btn">&#10148;</button>
+            </footer>
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
 
