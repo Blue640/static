@@ -3,297 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STATIC_ TERMINAL</title>
+    <title>STATIC // COMMUNICATIONS TERMINAL</title>
     <style>
-        /* --- CSS СТИЛИ --- */
+        :root {
+            --bg-color: #1a1b1e;
+            --panel-color: #25262b;
+            --accent-color: #e67e22; /* Тыквенно-оранжевый (милитари) */
+            --text-main: #c1c2c5;
+            --text-dim: #5c5f66;
+            --border-style: 1px solid #373a40;
+        }
+
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #050a10;
-            color: #a0c0e0;
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             overflow: hidden;
         }
 
-        .app-container {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-        }
+        .app-container { display: flex; height: 100vh; width: 100vw; }
 
-        /* Сайдбар */
+        /* --- БОКОВАЯ ПАНЕЛЬ --- */
         .sidebar {
-            width: 300px;
-            background-color: #0a1420;
-            border-right: 1px solid #1a3050;
+            width: 320px;
+            background-color: var(--panel-color);
+            border-right: var(--border-style);
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease;
+            transition: 0.3s;
         }
 
         .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #1a3050;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 25px 20px;
+            background: #2c2e33;
+            border-bottom: var(--border-style);
         }
 
         .sidebar-header h1 {
-            margin: 0;
-            font-size: 1.4rem;
-            color: #33ccff;
-            letter-spacing: 2px;
-            text-shadow: 0 0 8px rgba(51, 204, 255, 0.5);
+            margin: 0; font-size: 1.1rem; letter-spacing: 3px;
+            color: var(--accent-color); font-weight: 800;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #33ff99;
-            border-radius: 50%;
-            box-shadow: 0 0 5px #33ff99;
-        }
+        .sidebar-header p { margin: 5px 0 0; font-size: 0.7rem; color: var(--text-dim); }
 
-        .chats-list {
-            flex: 1;
-            overflow-y: auto;
-        }
+        .chats-list { flex: 1; overflow-y: auto; }
 
         .chat-item {
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #1a2535;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2c2e33;
             cursor: pointer;
-        }
-
-        .chat-item:hover { background: #122030; }
-        .chat-item.active { background: #1a3050; border-left: 3px solid #33ccff; }
-
-        .avatar {
-            width: 45px; height: 45px;
-            background: #1a3050;
-            border: 1px solid #33ccff;
-            border-radius: 8px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-weight: bold;
-            color: #33ccff;
+            gap: 12px;
+            transition: 0.2s;
         }
 
-        .chat-info h2 { margin: 0; font-size: 0.95rem; color: #fff; }
-        .chat-info p { margin: 0; font-size: 0.8rem; color: #6080a0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 180px; }
-
-        /* Окно чата */
-        .chat-window {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+        .chat-item:hover { background: #2c2e33; }
+        .chat-item.active { 
+            background: #2c2e33; 
+            border-left: 4px solid var(--accent-color);
         }
+
+        .chat-avatar {
+            width: 42px; height: 42px;
+            background: #373a40; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: var(--accent-color);
+            border: 1px solid #4d4f55;
+        }
+
+        .chat-meta h2 { margin: 0; font-size: 0.9rem; color: #fff; }
+        .chat-meta p { margin: 3px 0 0; font-size: 0.75rem; color: var(--text-dim); }
+
+        /* --- ОКНО ЧАТА --- */
+        .chat-window { flex: 1; display: flex; flex-direction: column; background: #141517; }
 
         .chat-header {
-            padding: 15px;
-            background: #0a1420;
-            border-bottom: 1px solid #1a3050;
-            display: flex;
-            align-items: center;
+            padding: 15px 20px;
+            background: var(--panel-color);
+            border-bottom: var(--border-style);
+            display: flex; align-items: center; justify-content: space-between;
         }
 
-        .back-btn {
-            display: none;
-            background: none; border: none;
-            color: #33ccff; font-size: 1.5rem;
-            margin-right: 10px; cursor: pointer;
-        }
+        .back-btn { display: none; background: none; border: none; color: var(--accent-color); font-size: 1.2rem; cursor: pointer; }
 
-        .chat-title h2 { margin: 0; font-size: 1.1rem; color: #fff; }
-        .chat-title p { margin: 0; font-size: 0.75rem; color: #33ff99; }
+        .chat-info h2 { margin: 0; font-size: 1rem; }
+        .chat-info span { font-size: 0.7rem; color: #40c057; } /* Зеленый онлайн */
 
-        .messages-container {
-            flex: 1;
-            padding: 20px;
+        .messages-area {
+            flex: 1; padding: 20px;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            background-image: radial-gradient(#1a3050 0.5px, transparent 0.5px); /* Сетка как в терминале */
-            background-size: 20px 20px;
-        }
-
-        .message {
-            max-width: 75%;
-            margin-bottom: 15px;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        .message.incoming {
-            align-self: flex-start;
-            background: #1a2535;
-            border: 1px solid #1a3050;
-        }
-
-        .message.outgoing {
-            align-self: flex-end;
-            background: #103050;
-            border: 1px solid #33ccff;
-            color: #fff;
-        }
-
-        .time {
-            display: block;
-            font-size: 0.7rem;
-            margin-top: 5px;
-            opacity: 0.6;
-            text-align: right;
-        }
-
-        .chat-input {
-            padding: 15px;
-            background: #0a1420;
-            display: flex;
+            display: flex; flex-direction: column;
             gap: 10px;
-            border-top: 1px solid #1a3050;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); /* Легкая текстура */
         }
 
-        .chat-input input {
-            flex: 1;
-            background: #050a10;
-            border: 1px solid #1a3050;
-            padding: 10px 15px;
-            color: #fff;
-            border-radius: 20px;
-            outline: none;
+        .msg {
+            max-width: 70%; padding: 10px 14px;
+            font-size: 0.9rem; position: relative;
+            border-radius: 2px;
         }
 
-        .chat-input input:focus { border-color: #33ccff; }
+        .msg.in { align-self: flex-start; background: #25262b; border-left: 2px solid var(--text-dim); }
+        .msg.out { align-self: flex-end; background: #2c2e33; border-right: 2px solid var(--accent-color); text-align: right; }
 
-        .send-btn {
-            background: #33ccff;
-            border: none;
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            color: #050a10;
-            font-weight: bold;
-            cursor: pointer;
+        .msg .time { display: block; font-size: 0.65rem; color: var(--text-dim); margin-top: 5px; }
+
+        /* --- ВВОД --- */
+        .input-bar {
+            padding: 20px; background: var(--panel-color);
+            display: flex; gap: 10px; border-top: var(--border-style);
         }
 
-        /* Адаптив под мобайл */
+        .input-bar input {
+            flex: 1; background: #1a1b1e; border: var(--border-style);
+            padding: 12px; color: #fff; outline: none; border-radius: 4px;
+        }
+
+        .input-bar button {
+            background: var(--accent-color); border: none; padding: 0 20px;
+            color: #000; font-weight: bold; border-radius: 4px; cursor: pointer;
+        }
+
+        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
         @media (max-width: 768px) {
-            .sidebar {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                z-index: 2;
-            }
-            .sidebar.hidden {
-                transform: translateX(-100%);
-            }
-            .back-btn {
-                display: block;
-            }
-            .message { max-width: 85%; }
+            .sidebar { position: absolute; width: 100%; height: 100%; z-index: 10; }
+            .sidebar.hidden { transform: translateX(-100%); }
+            .back-btn { display: block; }
+            .msg { max-width: 85%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+<div class="app-container">
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>STATIC // V.02</h1>
+            <p>ENCRYPTED TERMINAL SYSTEM</p>
+        </div>
+        <div class="chats-list" id="chats-list">
+            </div>
+    </aside>
+
+    <main class="chat-window">
+        <header class="chat-header">
+            <button class="back-btn" onclick="toggleSidebar()">[BACK]</button>
+            <div class="chat-info">
+                <h2 id="current-chat-name">System</h2>
+                <span id="current-chat-status">Connect established</span>
+            </div>
+            <div style="color: var(--text-dim); font-size: 0.7rem;">SECURE_MODE: ON</div>
+        </header>
+
+        <div class="messages-area" id="messages">
+            </div>
+
+        <div class="input-bar">
+            <input type="text" id="main-input" placeholder="Введите данные...">
+            <button onclick="send()">SEND</button>
+        </div>
+    </main>
+
+</div>
+
+<script>
+    // База данных чатов
+    const chatData = {
+        1: {
+            name: "Ярослав (R64)",
+            status: "Online / Terminal_A1",
+            messages: [
+                { type: 'in', text: "Статик на связи. Как видишь меня?", time: "20:01" },
+                { type: 'out', text: "Вижу отлично. Перешел на индустриальный протокол.", time: "20:02" }
+            ]
+        },
+        2: {
+            name: "Blue Archive [CORE]",
+            status: "Bot / Local",
+            messages: [
+                { type: 'in', text: "Внимание: Обнаружена новая сборка Static v.02.", time: "12:00" },
+                { type: 'in', text: "Логи системы обновлены.", time: "12:01" }
+            ]
+        },
+        3: {
+            name: "Unknown Node",
+            status: "Offline",
+            messages: [
+                { type: 'in', text: "Сигнал потерян...", time: "04:20" }
+            ]
+        }
+    };
+
+    let currentChatId = 1;
+
+    // Отрисовка списка чатов
+    function renderChats() {
+        const list = document.getElementById('chats-list');
+        list.innerHTML = '';
+        for (let id in chatData) {
+            const chat = chatData[id];
+            const div = document.createElement('div');
+            div.className = `chat-item ${id == currentChatId ? 'active' : ''}`;
+            div.onclick = () => selectChat(id);
+            div.innerHTML = `
+                <div class="chat-avatar">${chat.name[0]}</div>
+                <div class="chat-meta">
+                    <h2>${chat.name}</h2>
+                    <p>${chat.messages[chat.messages.length - 1].text}</p>
+                </div>
+            `;
+            list.appendChild(div);
+        }
+    }
+
+    // Выбор чата
+    function selectChat(id) {
+        currentChatId = id;
+        const chat = chatData[id];
+        document.getElementById('current-chat-name').innerText = chat.name;
+        document.getElementById('current-chat-status').innerText = chat.status;
         
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h1>STATIC_</h1>
-                <div class="status-dot"></div>
-            </div>
-            <div class="chats-list">
-                <div class="chat-item active" onclick="openChat()">
-                    <div class="avatar">ЯР</div>
-                    <div class="chat-info">
-                        <h2>Ярослав (R64)</h2>
-                        <p>Приём, как слышно? Статик...</p>
-                    </div>
-                </div>
-                <div class="chat-item">
-                    <div class="avatar">BA</div>
-                    <div class="chat-info">
-                        <h2>Blue Archive</h2>
-                        <p>Система обновлена до v1.0</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        renderMessages();
+        renderChats();
+        
+        if (window.innerWidth <= 768) toggleSidebar();
+    }
 
-        <main class="chat-window">
-            <header class="chat-header">
-                <button class="back-btn" onclick="closeChat()">&#8592;</button>
-                <div class="chat-title">
-                    <h2 id="chat-name">Ярослав (R64)</h2>
-                    <p>Terminal Active</p>
-                </div>
-            </header>
-
-            <div class="messages-container" id="msg-container">
-                <div class="message incoming">
-                    Привет! Тестирую новый мессенджер STATIC.
-                    <span class="time">19:45</span>
-                </div>
-                <div class="message outgoing">
-                    Работает чётко. Адаптив под мобайл на месте.
-                    <span class="time">19:46</span>
-                </div>
-            </div>
-
-            <footer class="chat-input">
-                <input type="text" placeholder="Введите сообщение..." id="input-field">
-                <button class="send-btn" onclick="sendMessage()">></button>
-            </footer>
-        </main>
-
-    </div>
-
-    <script>
-        /* --- JS ЛОГИКА --- */
-        const sidebar = document.getElementById('sidebar');
-        const inputField = document.getElementById('input-field');
-        const container = document.getElementById('msg-container');
-
-        // Для мобайла: скрыть список и показать чат
-        function openChat() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.add('hidden');
-            }
-        }
-
-        // Для мобайла: вернуться к списку чатов
-        function closeChat() {
-            sidebar.classList.remove('hidden');
-        }
-
-        // Функция отправки (визуальная часть)
-        function sendMessage() {
-            const text = inputField.value;
-            if (text.trim() !== "") {
-                const msg = document.createElement('div');
-                msg.className = 'message outgoing';
-                msg.innerHTML = `${text}<span class="time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
-                container.appendChild(msg);
-                inputField.value = "";
-                container.scrollTop = container.scrollHeight;
-            }
-        }
-
-        // Отправка по Enter
-        inputField.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
+    // Отрисовка сообщений
+    function renderMessages() {
+        const container = document.getElementById('messages');
+        container.innerHTML = '';
+        chatData[currentChatId].messages.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = `msg ${msg.type}`;
+            div.innerHTML = `${msg.text} <span class="time">${msg.time}</span>`;
+            container.appendChild(div);
         });
-    </script>
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // Отправка
+    function send() {
+        const input = document.getElementById('main-input');
+        if (!input.value.trim()) return;
+
+        const now = new Date();
+        const timeStr = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+
+        chatData[currentChatId].messages.push({
+            type: 'out',
+            text: input.value,
+            time: timeStr
+        });
+
+        input.value = '';
+        renderMessages();
+        renderChats(); // Чтобы обновить последнее сообщение в списке
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('hidden');
+    }
+
+    // Инициализация
+    window.onload = () => {
+        renderChats();
+        renderMessages();
+    };
+
+    // Отправка по Enter
+    document.getElementById('main-input').addEventListener("keypress", e => {
+        if (e.key === "Enter") send();
+    });
+</script>
+
 </body>
 </html>
